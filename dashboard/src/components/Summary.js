@@ -1,10 +1,22 @@
 import React from "react";
 
 const Summary = () => {
+  const params = new URLSearchParams(window.location.search);
+  const nameFromURL = params.get("name");
+  const emailFromURL = params.get("email");
+
+  // Save to localStorage when coming from login
+  if (nameFromURL) {
+    localStorage.setItem("username", nameFromURL);
+    localStorage.setItem("useremail", emailFromURL);
+  }
+
+  const name = localStorage.getItem("username") || "User";
+
   return (
     <>
       <div className="username">
-        <h6>Hi, User!</h6>
+        <h6>Hi, {name}!</h6>
         <hr className="divider" />
       </div>
 

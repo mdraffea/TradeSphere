@@ -17,6 +17,35 @@ const app = express();
 
 app.use(cors());
 app.use(bodyParser.json());
+const { UserModel } = require("./model/UserModel");
+
+app.post("/signup", async (req, res) => {
+  try {
+    const { name, email, password } = req.body;
+    const existing = await UserModel.findOne({ email });
+    if (existing) {
+      return res.status(400).json({ message: "Email already registered!" });
+    }
+    const newUser = new UserModel({ name, email, password });
+    await newUser.save();
+    res.status(201).json({ message: "Signup successful!" });
+  } catch (err) {
+    res.status(500).json({ message: "Server error!" });
+  }
+});
+
+app.post("/login", async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    const user = await UserModel.findOne({ email, password });
+    if (!user) {
+      return res.status(400).json({ message: "Invalid email or password!" });
+    }
+    res.status(200).json({ message: "Login successful!", user });
+  } catch (err) {
+    res.status(500).json({ message: "Server error!" });
+  }
+});
 
 // app.get("/addHoldings", async (req, res) => {
 //   let tempHoldings = [
